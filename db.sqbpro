@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/treya/Documents/Dev/HAExpress/db.sqlite" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1015"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,4:mainmqtt"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="mqtt" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="40"/><column index="2" value="158"/><column index="3" value="68"/><column index="4" value="154"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="settings" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="40"/><column index="2" value="82"/><column index="3" value="58"/><column index="4" value="66"/><column index="5" value="7426"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">select mqtt_ip, mqtt_id, mqtt_pw, JSON_EXTRACT(topics_json, '$[1].topic') from settings
+select date()</sql><sql name="SQL 2">select key, value from settings,json_tree(settings.topics_json, '$')  as Topics 
+
+select distinct value from settings,json_tree(settings.topics_json, '$')  as Topics where Topics.key = 'group'
+
+select key, value from settings,json_tree(settings.topics_json, '$')  as Topics where Topics.key = 'Topic' and Topics.value ='Tempurature'
+
+
+select topic, message,  datetime(date,'localtime') as date from mqtt where topic = 'home/door/front/open' ORDER by date desc LIMIT 10
+
+select topic, message,  datetime(date,'localtime') as date from mqtt where topic IN  
+(
+SELECT
+distinct
+ json_extract(value, '$.topic')
+ 
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = (SELECT
+
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/randomroom/temp')
+order by Key   
+)
+order by date desc
+
+
+SELECT
+key,
+value,
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/laptop/logoff'
+
+
+SELECT
+key,
+value,
+ json_extract(value, '$.topic')
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = 'Temparature'
+
+SELECT
+key,
+value,
+ json_extract(value, '$.topic')
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = 'Doors'
+
+SELECT
+key,
+value,
+ json_extract(value, '$.topic')
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = 'Laptop'
+
+SELECT * FROM settings,json_tree(settings.topics_json);
+
+select mqtt_ip, mqtt_id, mqtt_pw, JSON_EXTRACT(topics_json, '$[1].topic') from settings
+
+select topic, message,  datetime(date,'localtime') as date, strftime('%Y-%m-%d %H:%M:%S.%f',date) as fulldate from mqtt where topic like 'home/office/%' ORDER by date desc LIMIT 100
+
+select topic, message,  datetime(date,'localtime') as date from mqtt where topic = 'home/office/temp' ORDER by date desc LIMIT 10</sql><sql name="SQL 6">WITH topics AS
+(
+SELECT
+distinct
+ json_extract(value, '$.topic') as topic
+ 
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = (SELECT
+
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/randomroom/temp')
+order by Key 
+)
+select M.topic, M2.message,MAX(  datetime(M.date,'localtime')) as date from mqtt as M
+inner join mqtt as M2 on M2.date = M.date
+inner join topics as T on T.topic = M.topic
+Group by M.topic,M2.message 
+--Select * from topic
+
+select topic, MAX(  datetime(date,'localtime')) as date from mqtt where topic IN  
+(
+SELECT
+distinct
+ json_extract(value, '$.topic')
+ 
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = (SELECT
+
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/randomroom/temp')
+order by Key   
+)
+Group by topic, datetime(date,'localtime')
+order by date desc</sql><sql name="SQL 8">WITH topics AS
+(
+SELECT
+distinct
+ json_extract(value, '$.topic') as topic
+ ,json_extract(value, '$.group') as  'group'
+  ,json_extract(value, '$.label') as  'label'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = (SELECT
+
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/randomroom/temp')
+order by Key 
+),
+messages as 
+(
+select T.topic, MAX( date) as date from mqtt 
+inner join topics as T on T.topic = mqtt.topic
+group by T.topic
+)
+Select T.topic, M.message,T.'group',T.'label', datetime(M2.date,'localtime') as date, STRFTIME('%Y-%m-%d %H:%M:%f', M2.date) as sdate from topics as T inner join mqtt as M on M.topic = T.topic
+inner join messages as M2 on M2.date = M.date
+
+--select message, date from messages 
+--Select * from topics
+--select * from messages order by date desc
+--select M.topic, M2.message,MAX(  datetime(M.date,'localtime')) as date from mqtt as M
+--inner join messages as M2 on M2.date = M.date
+--inner join topics as T on T.topic = M.topic
+--Group by M.topic,M2.message 
+--</sql><sql name="Get_Based_On_topic">WITH topics AS
+(
+SELECT
+distinct
+ json_extract(value, '$.topic') as topic
+ ,json_extract(value, '$.group') as  'group'
+ ,json_extract(value, '$.label') as  'label'
+ ,json_extract(value, '$.order') as  'order'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = (SELECT
+
+ json_extract(value, '$.group') as  'group'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.topic') = 'home/door/front/vcc')
+order by 'order' 
+),
+ppmxdate as (
+select T.Topic, MAX(mqtt.date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+inner join pmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+group by T.topic
+),
+pmxdate as (
+select T.Topic, MAX(mqtt.date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+inner join mxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+group by T.topic
+),
+mxdate as (
+select T.Topic, MAX(date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+group by T.topic
+),
+prevprevprevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join ppmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+),
+prevprevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join pmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+),
+prevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join mxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+)
+,messages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+group by T.topic
+),
+TDAY as
+(
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label',T.'order' from topics as T inner join mqtt as M on M.topic = T.topic
+inner join messages as M2 on M2.date = M.date
+order by CAST(t.'order' AS INTEGER)
+)
+,
+PDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevmessages as M2 on M2.date = M.date
+),
+PPDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevprevmessages as M2 on M2.date = M.date
+),
+PPPDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevprevprevmessages as M2 on M2.date = M.date
+)
+select T.topic, T.message, T.date,P.message as pmessage, P.date as pdate,PP.message as ppmessage, PP.date as ppdate,PPP.message as pppmessage, PPP.date as pppdate,T.'group',T.'label' from  TDAY as T
+ left join PDAY P on P.topic = T.topic
+ left join PPDAY PP on PP.topic = T.topic
+ left join PPPDAY PPP on PPP.topic = T.topic
+order by CAST(T.'order' AS INTEGER)
+
+
+--select T.topic, T.message, T.date,P.message as pmessage, P.date as pdate,T.'group',T.'label' from  TDAY as T inner join PDAY P on P.topic = T.topic
+
+
+
+</sql><sql name="Get_based_on_Group">WITH topics AS
+(
+SELECT
+distinct
+ json_extract(value, '$.topic') as topic
+ ,json_extract(value, '$.group') as  'group'
+ ,json_extract(value, '$.label') as  'label'
+ ,json_extract(value, '$.order') as  'order'
+FROM
+settings, 
+json_each(settings.topics_json)
+WHERE json_extract(value, '$.group') = 'Voltage'
+order by 'order' 
+),
+ppmxdate as (
+select T.Topic, MAX(mqtt.date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+inner join pmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+group by T.topic
+),
+pmxdate as (
+select T.Topic, MAX(mqtt.date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+inner join mxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+group by T.topic
+),
+mxdate as (
+select T.Topic, MAX(date) as date from mqtt inner join topics as T on T.topic = mqtt.topic
+group by T.topic
+),
+prevprevprevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join ppmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+),
+prevprevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join pmxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+),
+prevmessages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+inner join mxdate as MX on MX.topic = mqtt.topic
+where mqtt.date &lt; MX.date
+
+group by T.topic
+)
+,messages as 
+(
+select T.topic,  MAX(mqtt.date) as date from mqtt  
+inner join topics as T on T.topic = mqtt.topic
+group by T.topic
+),
+TDAY as
+(
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label',T.'order' from topics as T inner join mqtt as M on M.topic = T.topic
+inner join messages as M2 on M2.date = M.date
+order by CAST(t.'order' AS INTEGER)
+)
+,
+PDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevmessages as M2 on M2.date = M.date
+),
+PPDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevprevmessages as M2 on M2.date = M.date
+),
+PPPDAY as
+(
+-- datetime(M2.date,'localtime') as date,, M2.date as UTCDATE, STRFTIME('%m/%d/%Y %H:%M:%f', M2.date,'localtime') --ms
+Select T.topic, M.message,STRFTIME('%m/%d/%Y %H:%M:%S', M2.date,'localtime') as date,T.'group',T.'label'  from topics as T inner join mqtt as M on M.topic = T.topic
+inner join prevprevprevmessages as M2 on M2.date = M.date
+)
+select T.topic, T.message, T.date,P.message as pmessage, P.date as pdate,PP.message as ppmessage, PP.date as ppdate,PPP.message as pppmessage, PPP.date as pppdate,T.'group',T.'label' from  TDAY as T
+ left join PDAY P on P.topic = T.topic
+ left join PPDAY PP on PP.topic = T.topic
+ left join PPPDAY PPP on PPP.topic = T.topic
+order by CAST(T.'order' AS INTEGER)
+
+
+--select T.topic, T.message, T.date,P.message as pmessage, P.date as pdate,T.'group',T.'label' from  TDAY as T inner join PDAY P on P.topic = T.topic
+
+
+
+</sql><sql name="JSON_as_Table">SELECT json_extract(x.value, '$.topic') as 'topic'
+           , json_extract(x.value, '$.query') as 'query'
+		   , json_extract(x.value, '$.label') as 'label'
+		   , json_extract(x.value, '$.group') as 'group'
+           , json_extract(x.value, '$.order') as 'order'
+FROM settings, json_each(topics_json) AS x
+order by json_extract(x.value, '$.group') ,  CAST(json_extract(x.value, '$.order') AS INTEGER)</sql><sql name="SQL 10">CREATE TABLE IF NOT EXISTS settings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      mqtt_ip VARCHAR(15),
+      mqtt_id VARCHAR(50),
+      mqtt_pw VARCHAR(50),
+      topics_json text
+      )</sql><current_tab id="4"/></tab_sql></sqlb_project>

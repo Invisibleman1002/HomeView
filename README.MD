@@ -1,0 +1,131 @@
+# Welcome to HomeView
+
+### _One view says it all_
+
+This project allows you to easily display MQTT data as a simple web site. It is similar to the cards provided by Home Assistant, but designed as a standalone MQTT viewer.
+
+The project consists of a NodeJS web server that subscribes to specified MQTT topics. These topics are then displayed on a HomeView using a format you specify.
+
+The app uses Handlebar templates to render/compile the data. There is a main page with all the groups listed, and each group has its own template.
+
+When the server receives a new MQTT message, it saves the data to a SQLite database. It then queries the database to get the last 4 data points for that group, compiles the template, and sends the updated HTML to the web page using WebSockets.
+
+This means the page does not need to reload when new data comes in. Only the specific group gets updated dynamically.
+
+## Usage
+
+To use the project:
+
+1. Update `main.hbs` with the groups you want displayed. Each group needs a `<div></div>` containing the group name, example below. I used [W3.CSS](https://www.w3schools.com/w3css/default.asp) as the CSS framework. "W3.CSS is Smaller, Faster and Easier to Use. _A Quality Alternative to Bootstrap_"
+
+> main.hbs
+
+```
+<div class='w3-row'>
+  <div class='w3-col'>
+    <div id='Doors'>{{Doors}}</div>
+  </div>
+</div>
+<div class='w3-row'>
+    <div id='Temperature'>{{Temperature}}</div>
+  </div>
+</div>
+<div class='w3-row'>
+  <div class='w3-half'>
+    <div id='Voltage'>{{Voltage}}</div>
+  </div>
+  <div class='w3-half'>
+    <div id='Laptop'>{{Laptop}}</div>
+  </div>
+</div>
+```
+
+2. Under `\views\templates`, this is where you create your .hbs file the same name as the group. For example, I have a `Temperature` group for my sensors I made. I created a `Temperature.hbs` file like below.
+
+> Temperature.hbs
+
+```
+<div class="w3-container" data-group="{{group}}" id="grp{{group}}">
+  <div class="w3-card-4" >
+    <header class="w3-container w3-blue">
+      <h3 style="margin: 1px 0;">{{group}}</h3>
+    </header>
+
+    <div class="w3-container">
+<table class="w3-table-all w3-responsive w3-striped w3-bordered w3-card-4">
+<tr>
+  <th>Sensor</th>
+  <th>Temp</th>
+  <th>Date</th>
+  <th>Temp -1</th>
+  <th>Date</th>
+  <th>Temp -2</th>
+  <th>Date</th>
+  <th>Temp -3</th>
+  <th>Date</th>
+</tr>
+{{#each topics}}
+<tr>
+  <td>{{label}}</td>
+  <td>{{messagenumber message 1}}</td>
+  {{#ifdatebetween date  ../updateddate}}
+  <td><span class="w3-tag">{{dayjs date "MM/DD/YYYY hh:mm:ss A" "1"}}</span></td>
+  {{else}}
+  <td>{{dayjs date "MM/DD/YYYY hh:mm:ss A" "1"}}</td>
+  {{/ifdatebetween}}
+  <td>{{messagenumber pmessage 1}}</td>
+  <td>{{dayjs pdate "MM/DD/YYYY hh:mm:ss A" "1"}}</td>
+  <td>{{messagenumber ppmessage 1}}</td>
+  <td>{{dayjs ppdate "MM/DD/YYYY hh:mm:ss A" "1"}}</td>
+  <td>{{messagenumber pppmessage 1}}</td>
+  <td>{{dayjs pppdate "MM/DD/YYYY hh:mm:ss A" "1"}}</td>
+</tr>
+{{/each}}
+</table>
+    </div>
+
+    <footer class="w3-container w3-blue">
+      <h5 style="margin: 1px 0;">last updated: {{updateddate}}</h5>
+    </footer>
+  </div>
+</div>
+```
+
+This above handlbars template file get compiled each time a mqtt subscription is received. It is then sent to the websocket which then updates the div listed for that group.
+
+3. You will need to run `npm install` in order to grab all the node modules.
+4. Run `node server.js` to start the web server
+
+5. Open the web interface in a browser to view your data which is located on http://localhost:3000.
+
+> ![HomeView](/images/homeview.png)
+
+On first load, you will be redirected to a setup page to enter at least one MQTT topic along with the connection details to your mqtt server. Upon pressing `Save all Settings` the site will restart the mqtt topics subscriptions and depending on what data has changed will force a reload of any connected html pages.
+
+The web site can be viewed on a device like a Raspberry Pi connected to a TV or monitor. For example, a Pi 3B+ works well as a server, while an original Pi Zero is too slow to run as the server, it works okay for displaying the data.
+
+Please note that ALL sql returned will have these fields:
+
+**You can use this in your Handlebar(.hbs) file.**
+
+- `topic` = the topic you subscribed to in mqtt
+- `message` = the message returned.
+- `date` = the current date time of the newly arrived message.
+- `pmessage` = Previous message received
+- `pdate` = Previous date.
+- `ppmessage` = Previous previous message received
+- `ppdate` = Previous previous date.
+- `pppmessage` = Previous previous previous message received
+- `pppdate` = Previous previous previous date.
+- ^^^I know, I know. what else do you name these?^^^
+- `group` = The group that topic is associated with
+- `label` = How you prefer it displayed.
+
+There are a few helper function that can be used as well. Here is an example of dayjs being used to format the datetime.`<td>{{dayjs date "MM/DD/YYYY hh:mm:ss A" "1"}}</td>`. The "1" is another option where as if the day is the same as the current day, only show the time part. Messagenumber `<td>{{messagenumber message 1}}</td>` is used to format a floating point humber into X decimal places.
+
+![sqloutput](./images/sql_output.png)
+
+## Setup Page
+
+The [setup](./images/setup.png) page allows you to configure your MQTT IP,User and Password. It is also where you enter in the topics you want to view on the main page.
+![Setup](/images/setup.png)

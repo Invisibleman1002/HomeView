@@ -1,0 +1,97 @@
+<div class='w3-container'>
+  <div class='w3-container w3-orange'>
+    <h3>MQTT Server details --{{mqttstatus}}--</h3>
+  </div>
+  <form class='w3-container'>
+    
+      <input id='txtMqttip' class='w3-input' type='text' placeholder='192.168.0.44' />
+      <label>MQTT IP</label></p>
+
+  
+      <input id='txtMqttid' class='w3-input' type='text' placeholder='mqtt_user' />
+      <label>MQTT ID</label></p>
+
+  
+      <input id='txtMqttpw' class='w3-input' type='text' placeholder='mqtt_password' />
+      <label>MQTT PW</label></p>
+  </form>
+
+  <br />
+  <div class='w3-container w3-orange'>
+    <h3>Topic Setup</h3>
+  </div>
+
+  <label class='w3-text-teal'><b>Topic</b></label>
+  <input
+    id='txtTopic'
+    class='w3-input w3-border w3-light-grey'
+    type='text'
+    placeholder='home/office/temp'
+  />
+
+  <label class='w3-text-teal'><b>Label</b></label>
+  <input
+    id='txtLabel'
+    class='w3-input w3-border w3-light-grey'
+    type='text'
+    placeholder='Office Temp'
+  />
+
+  <div class='w3-row-padding'>
+    <div class='w3-third'>
+      <label class='w3-text-teal'><b>Group</b></label>
+      <input
+        id='txtGroup'
+        class='w3-input w3-border w3-light-grey'
+        type='text'
+        placeholder='group sensors together.'
+      />
+    </div>
+    <div class='w3-third'>
+      <label class='w3-text-teal'><b>Order</b></label>
+      <input
+        id='txtOrder'
+        class='w3-input w3-border w3-light-grey'
+        type='text'
+        placeholder='Display order'
+      />
+    </div>
+    <div class='w3-third'>
+      <label class='w3-text-teal'><b>Query</b></label>
+      <input
+        id='txtQuery'
+        class='w3-input w3-border w3-light-grey'
+        type='text'
+        placeholder='not used....yet...'
+      />
+    </div>
+  </div>
+  <div class='w3-row-padding'>
+    <div class='w3-third'>
+      <div class='w3-panel w3-pale-green'></div>
+    </div>
+    <div class='w3-third'>
+      <div id='pnlMessage' class='w3-panel w3-pale-green'>
+        <span id='txtMessage'></span>
+      </div>
+    </div>
+  </div>
+  <div class='w3-row-padding'>
+    <div class='w3-col m2'>
+      <button id='btnAddUpdate' class='w3-btn w3-blue-grey'>Add</button>
+    </div>
+    <div class='w3-col m6'>
+      <button id='btnCancel' class='w3-btn w3-blue-grey'>Cancel</button>
+    </div>
+    <div class='w3-col m2'>
+      <button id='btnSaveAll' class='w3-btn w3-blue-grey'>Save all Settings</button>
+    </div>
+  </div>
+
+  <br />
+
+  <div class='w3-responsive'>
+    <table class='w3-table-all table' id='myTable'></table>
+  </div>
+  <input type='hidden' id='ri' value='' />
+</div>
