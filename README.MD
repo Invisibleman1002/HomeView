@@ -12,6 +12,8 @@ When the server receives a new MQTT message, it saves the data to a SQLite datab
 
 This means the page does not need to reload when new data comes in. Only the specific group gets updated dynamically.
 
+> ![HomeView](/images/homeview.png)
+
 ## Usage
 
 To use the project:
@@ -97,8 +99,6 @@ This above handlbars template file get compiled each time a mqtt subscription is
 4. Run `node server.js` to start the web server
 
 5. Open the web interface in a browser to view your data which is located on http://localhost:3000.
-
-> ![HomeView](/images/homeview.png)
 
 On first load, you will be redirected to a setup page to enter at least one MQTT topic along with the connection details to your mqtt server. Upon pressing `Save all Settings` the site will restart the mqtt topics subscriptions and depending on what data has changed will force a reload of any connected html pages.
 
