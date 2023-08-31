@@ -121,7 +121,7 @@ hbs.handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
   }
 });
 
-const sockserver = new WebSocketServer({ port: 80 });
+const sockserver = new WebSocketServer({ port: 3001 });
 async function SetupWebSocket() {
   const rows = await db.getSettings();
   console.log('--SetupWebSocket---');

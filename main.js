@@ -1,4 +1,4 @@
-var gateway = `ws://${window.location.hostname}`;
+var gateway = `ws://${window.location.hostname}:3001`;
 var websocket;
 var attempts = 0;
 let ActiveTimer = false;
