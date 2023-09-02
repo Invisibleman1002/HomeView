@@ -4,13 +4,13 @@
 
 This project allows you to easily display MQTT data as a simple web site. It is similar to the cards provided by Home Assistant, but designed as a standalone MQTT viewer.
 
-The project consists of a NodeJS web server that subscribes to specified MQTT topics. These topics are then displayed on a HomeView using a format you specify.
+HomeView consists of a NodeJS web server that subscribes to specified MQTT topics. These topics are then displayed on a main web page using a format you specify.
 
 The app uses Handlebar templates to render/compile the data. There is a main page with all the groups listed, and each group has its own template.
 
 When the server receives a new MQTT message, it saves the data to a SQLite database. It then queries the database to get the last 4 data points for that group, compiles the template, and sends the updated HTML to the web page using WebSockets.
 
-This means the page does not need to reload when new data comes in. Only the specific group gets updated dynamically.
+This means the page does not need to reload when new data comes in. Only the specific group gets updated dynamically. So groups get updated indivually allows you can see the latest updates for each group.
 
 > ![HomeView](/images/homeview.png)
 
@@ -18,7 +18,7 @@ This means the page does not need to reload when new data comes in. Only the spe
 
 To use the project:
 
-1. Update `main.hbs` with the groups you want displayed. Each group needs a `<div></div>` containing the group name, example below. I used [W3.CSS](https://www.w3schools.com/w3css/default.asp) as the CSS framework. "W3.CSS is Smaller, Faster and Easier to Use. _A Quality Alternative to Bootstrap_"
+1. Update `main.hbs` with the groups you want displayed. Each group needs a `<div></div>` containing the group name, example below. I used [W3.CSS](https://www.w3schools.com/w3css/default.asp) as the CSS framework. "W3.CSS is Smaller, Faster and Easier to Use. _A Quality Alternative to Bootstrap_".
 
 > main.hbs
 

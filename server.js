@@ -5,6 +5,7 @@
 /*
 https://github.com/websockets/ws/tree/master
 */
+const version = '1.0';
 const http = require('http');
 const express = require('express');
 const handlebars = require('express-handlebars');
@@ -344,6 +345,7 @@ app.get('/', async (req, res) => {
   //How to send a dynamic array of TestArray?
   res.render('main', {
     layout: 'index',
+    version: version,
     Groups: JSON.stringify(result),
   });
 });
@@ -368,6 +370,7 @@ app.get('/setup/', (req, res) => {
   res.render('setmain', {
     layout: 'setup',
     //setter: 'this is the setup page',
+    version: version,
     mqttstatus: `mqtt active status = ${mRunning.toString()}`,
   });
 });
