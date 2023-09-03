@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
   table.on('datatable.selectrow', (rowIndex, event) => {
     event.preventDefault();
     if (isNaN(rowIndex)) return;
-    console.log(rowIndex);
+    // console.log(rowIndex);
     const row = table.data.data[rowIndex];
     //console.log(event.srcElement);
     if (event.srcElement.classList.contains('clsDelete')) {
@@ -103,103 +103,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     table.update();
-    // console.log(row[1].text);
-    // document.getElementById('txtTopic').value = row[0].text;
-    // document.getElementById('txtQuery').value = row[1].text;
-    // document.getElementById('txtLabel').value = row[2].text;
-    // document.getElementById('txtGroup').value = row[3].text;
-    // document.getElementById('txtOrder').value = row[4].text;
-    // document.getElementById('ri').value = rowIndex;
-    // console.log(row.length);
-    // console.log(row);
-    // Array.from(row.children).forEach(function (col, index) {
-    //   var value = col.innerHTML.trim().toLowerCase();
-    //   console.log(value);
-    //   console.log(col);
-    //   console.log(index);
-    // });
-    // let sch = table.search('Temperature');
-    // const trs = document.getElementById('myTable').querySelectorAll('tr');
-    // console.log(trs);
-    // let search = row[3].text; //.toLowerCase();
-    // trs.forEach((tr) => {
-    //   // Get all cells in a row
-    //   let tds = tr.querySelectorAll('td');
-    //   console.log(tds);
-    //   var index = [].indexOf.call(tds, search);
-    //   console.log(index);
-    //   console.log(tr.children);
-    //   Array.from(tr.children).forEach(function (col, index) {
-    //     var value = col.innerHTML.trim().toLowerCase();
-    //     console.log(value);
-    //     console.log(col);
-    //     console.log(index);
-    //   });
-    //   // String that contains all td textContent from a row
-    //   //   let str = Array.from(tds)
-    //   //     .map((td) => {
-    //   //       return td.textContent.toLowerCase();
-    //   //     })
-    //   //     .join('');
-    //   //   console.log(str);
-    //   //   tr.style.display = str.indexOf(search) > -1 ? 'table-row' : 'none';
-    // });
-    // for (let tr in trs) {
-    //   console.log(tr.getElementsByTagName('td')[0]);
-    // }
-
-    /*         document.getElementById('search').onkeyup = (e) => {
-      for (const tr of trs)
-        tr.style.display = tr.innerText
-          .toLowerCase()
-          .includes(e.target.value.toLowerCase())
-          ? ''
-          : 'none';
-    }; */
-
-    //const data = [].slice.call(row).map(cell => cell.data);
-    // console.log(data);
-    //message = message.join("")
-    //message = `${message}\n\nThe row data is:\n${JSON.stringify(data)}`
-    //alert(message)
-    // rows.updateRow(index, cols)
-    // let rows = table.rows;
-    // console.log(rows);
-    // works table.rows.remove(rowIndex);
-
-    //table.insert({id: 1, name: 'Edward K.', country: 'UK', city: 'London'});
-    //let newRow = ["column1", "column2", "column3", "column4","c5"];
-    //table.rows.add(newRow);
-    //table.rows.updateRow(rowIndex,newRow);
-    //rows.remove(rowIndex);  //works
   });
-  //   table.on('datatable.init', () => {
-  //     document.querySelectorAll('.clsDelete addclick').forEach((el) => {
-  //       //console.log(el);
-  //       el.addEventListener(
-  //         'click',
-  //         function (event) {
-  //           if (confirm('Delete row?')) {
-  //             var rowIndex = event.target.getAttribute('data-row');
-  //             console.log(`delete: ${rowIndex}`);
-  //             table.rows.remove(parseInt(rowIndex));
-  //             //table.update();
-  //             CancelTopic();
-  //           }
-  //         },
-  //         false
-  //       );
-  //     });
-  //   });
+
   table.on('datatable.search', function (query, matched) {
-    console.log('matched');
-    console.log(matched);
-    // console.log(table.rows);
-    // matched.forEach((m) => {
-    //   console.log('matched');
-    //   console.log(table.data.data[m]);
-    // });
-    //
+    // console.log('matched');
+    // console.log(matched);
   });
   table.on('datatable.update', () => {
     // console.log('update called');
@@ -237,9 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
       //  console.log(data.setting);
       //  console.log(Object.keys(data.topic[0]));
       // data.topic.map((item) => Object.values(item));
-      let newdata = data.topic.map((item) => Object.values(item));
+      // let newdata = data.topic.map((item) => Object.values(item));
       // console.log(newdata);
-      let sh = [];
+      //let sh = [];
       let wtjson = JSON.stringify(data.topic);
       // console.log(wtjson);
       let myjson = JSON.parse(wtjson);
@@ -275,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let rowIndex = parseInt(document.getElementById('ri').value);
     console.log(`SaveTopic: ${rowIndex}`);
     if (document.getElementById('txtTopic').value === '') {
-      console.log('NO DATA');
+      showMessage('You need some data.', 'yellow');
       return;
     }
     let newRow = [
@@ -320,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('UpdateTopic');
     if (isNaN(rowIndex)) return;
     const row = table.data.data[rowIndex];
-    console.log(row[1].text);
+    //console.log(row[1].text);
     document.getElementById('txtTopic').value = row[0].text;
     document.getElementById('txtQuery').value = row[1].text;
     document.getElementById('txtLabel').value = row[2].text;
@@ -328,15 +236,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('txtOrder').value = row[4].text;
     document.getElementById('ri').value = rowIndex;
     table.search(document.getElementById('txtGroup').value, [3]);
-    // console.log(row.length);
-    // console.log(row);
-    // console.log('UpdateTopic');
     document.getElementById('btnAddUpdate').textContent = 'Update';
-    // let columns = table.columns;
-    // console.log(columns);
-    // columns.hide([1]);
-    // columns.settings[0].sortable = false;
-    // table.update();
+
     let settings = table.columns.settings;
     settings.forEach((s) => {
       s.sortable = false;
@@ -344,9 +245,14 @@ document.addEventListener('DOMContentLoaded', function () {
     table.update();
   }
   function showMessage(message, color) {
-    //document.getElementById('pnlMessage').
-    document.getElementById('txtMessage').textContent =
-      'You cannot do that dave.';
+    document.getElementById('txtMessage').textContent = message;
+
+    var clr = `w3-${color}`;
+    document.getElementById('pnlMessage').classList.add(clr);
+    setTimeout(() => {
+      document.getElementById('txtMessage').textContent = '';
+      document.getElementById('pnlMessage').classList.remove(clr);
+    }, 5000);
   }
   function CancelTopic() {
     document.getElementById('txtTopic').value = '';
@@ -367,14 +273,26 @@ document.addEventListener('DOMContentLoaded', function () {
     table.update();
   }
   function SaveAllSettings() {
-    showMessage('no data', 'blue');
-    // if (!table.hasRows) {
-    //   console.log('No saving without data.');
-    // }
-    console.log(table.data.headings[0].data);
+    if (
+      document.getElementById('txtMqttip').value === '' ||
+      document.getElementById('txtMqttid').value === '' ||
+      document.getElementById('txtMqttpw').value === ''
+    ) {
+      showMessage('Missing MQTT details.', 'red');
+      return false;
+    }
+    if (document.getElementById('txtTopic').value !== '') {
+      showMessage('Finished your Edits.', 'red');
+      return;
+    }
+    if (!table.hasRows) {
+      showMessage('Nothing to save.', 'red');
+      return false;
+    }
+    //console.log(table.data.headings[0].data);
 
     const row = table.data.data;
-    console.log(row);
+    //console.log(row);
     var myjson = [];
     var objarr = {};
     table.data.data.forEach((r) => {
@@ -387,28 +305,12 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       myjson.push(objarr);
     });
-    console.log('jparse');
-    console.log(myjson);
-    // var wtf = JSON.stringify(myjson);
-    // console.log(wtf);
-    // console.log(JSON.parse(wtf));
-    //    document.getElementById('txtMqttip').value
-    //  document.getElementById('txtMqttid').value
-    //document.getElementById('txtMqttpw').value
+
     var settings = {
       mqtt_ip: document.getElementById('txtMqttip').value,
       mqtt_id: document.getElementById('txtMqttid').value,
       mqtt_pw: document.getElementById('txtMqttpw').value,
     };
-
-    //console.log(table);
-
-    // console.log(
-    //   exportJSON(table, {
-    //     download: true,
-    //     space: 3,
-    //   })
-    // );
 
     var mtdata = { setting: settings, topic: myjson };
     fetch('/mtsettings', {
@@ -423,20 +325,8 @@ document.addEventListener('DOMContentLoaded', function () {
       .then((res) => console.log(res));
     console.log(mtdata);
   }
-  /*
-const rows = dataTable.rows()
 
-// find row with string in first td
-const {index, cols} = rows.findRow(0, '144')
-// index = 1
-// cols = ['144', 'Mary', '21']
-
-// change td
-cols[1] = 'Susan'
-
-// update row in data table
-rows.updateRow(index, cols)
-*/
+  //Not implimented yet.  PLaying with Helping recorder your groups if you move the Order onto an existing number
   function CheckGroups() {
     let data = [
       { FirstName: 'John', LastName: 'Doe', DOB: '1980-01-01', ORDERBY: 1 },

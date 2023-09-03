@@ -128,4 +128,70 @@ There are a few helper function that can be used as well. Here is an example of 
 ## Setup Page
 
 The [setup](./images/setup.png) page allows you to configure your MQTT IP,User and Password. It is also where you enter in the topics you want to view on the main page.
+The topics are listed out in a Datatable. You can add/edit/remove a topic to be monitored.  
+Make sure you click the `Save all Settings` when you complete your setup.
 ![Setup](/images/setup.png)
+
+![Setup](/images/setup.gif)
+
+## Pi Setup
+
+I mentioned running this on a Pi. I have mine running using PM2. I also updated my service file to do a git pull before starting the service. That way my code is always up to date. If you fork your own branch, then you could also include your templates and main.hbs file to get pulled as well.
+
+> sudo nano /etc/systemd/system/pm2-{your user name}.service
+
+```
+[Unit]
+Description=PM2 process manager
+Documentation=https://pm2.keymetrics.io/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=taughenbaugh
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PATH=/home/taughenbaugh/.nvm/versions/node/v18.17.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/us>
+Environment=PM2_HOME=/home/taughenbaugh/.pm2
+PIDFile=/home/taughenbaugh/.pm2/pm2.pid
+Restart=on-failure
+WorkingDirectory=/home/taughenbaugh/app/HomeView
+ExecStartPre=/usr/bin/git -C /home/taughenbaugh/app/HomeView pull
+ExecStart=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 resurrect
+ExecReload=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 reload all
+ExecStop=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+I might update this after I setup from scratch again.
+I had to try severals different things to get stuff to work as I wanted. Which means, I have no idea is this below is exactly as stated.
+
+sudo npm install -g pm2
+
+I installed `HomeView` into an `app` folder on my home user folder.
+
+If you cd into your app folder after it is created. You can run:
+
+```
+git clone https://github.com/Invisibleman1002/HomeView.git
+```
+
+This will create the intial `HomeView` folder with all the files.
+
+Once in here, you need to run `npm install` to get the node modules.
+
+You can either use the existing `/HomeView/view/templates/test.hbs` or generate your own based on the groups you know you want to create.
+Also rename the file `rename_to_main.hbs` to main.hbs, and add your new groups here as well. My example is located above.
+
+Before setting it up in pm2, I recommend running `npm start`. This will create the blank database and start the web server on port 3000. Open a browser and go to http://localhost:3000 on your pi, or connect to another machine using your Pis ip address.
+
+Once you save, if this all works, you can set off a sensor and see it on the HomeView. You should also see some console.log message showing the details of the MQTT topic it received. If everything works as expected, exit this service and finish the PM2 setup.
+
+While in the HomeView folder, you can type `pm2 start server.js`. Command `pm2 ls` will list the services. I think you also need to do a `pm2 save` so it stays active on a reboot.
+
+OH! You can use https://sqlitebrowser.org/ to view the database file. If you use this, you can also load the included [db.sqbpro](db.sqbpro) file to view all the SQL statments I created in designing this. You're going to love the SQL for getting all the details based on the Topic received. Its a 100 lines of pure luck that it worked.
