@@ -12,7 +12,7 @@ const handlebars = require('express-handlebars');
 const path = require('path');
 const mqtt = require('mqtt'); // require mqtt
 const { WebSocketServer } = require('ws');
-var mdns = require('multicast-dns')();
+//var mdns = require('multicast-dns')();
 const dayjs = require('dayjs');
 
 var clsSettings = require('./g_settings.js'); //import clsSettings from './g_settings.js';
