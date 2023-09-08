@@ -258,6 +258,38 @@ class Dbase {
     order by json_extract(x.value, '$.group') ,  CAST(json_extract(x.value, '$.order') AS INTEGER)`;
     return this.db.prepare(sql).all();
   }
+  getDetailsbyTopic(topic) {
+    const sql = `
+    WITH tgroup AS
+    (
+    SELECT
+    json_extract(value, '$.topic') as topic,
+    json_extract(value, '$.group') as  'group'
+    FROM
+    settings, 
+    json_each(settings.topics_json)
+    WHERE json_extract(value, '$.topic') = ?
+    )
+    select m.id,m.topic, m.message, STRFTIME('%m/%d/%Y %H:%M:%S', m.date,'localtime') as date,g.'group' from mqtt m
+    inner join tgroup g on g.topic = m.topic  order by m.date desc LIMIT 100
+    `;
+    return this.db.prepare(sql).all(topic);
+  }
+  getGrouplist(group) {
+    const sql = `
+    SELECT
+    distinct
+    json_extract(value, '$.topic') as topic
+    ,json_extract(value, '$.group') as  'group'
+    ,json_extract(value, '$.label') as  'label'
+    ,json_extract(value, '$.order') as  'order'
+    FROM
+    settings, 
+    json_each(settings.topics_json)
+    WHERE json_extract(value, '$.group') = ?
+    order by 'order'`;
+    return this.db.prepare(sql).all(group);
+  }
 }
 
 module.exports = Dbase;

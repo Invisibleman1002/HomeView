@@ -12,6 +12,9 @@ function initWebSocket() {
 }
 function onOpen(event) {
   console.log('Connection opened');
+  if (document.getElementById('arrGroups').innerHTML === '') {
+    return;
+  }
   var GROUPS = JSON.parse(document.getElementById('arrGroups').innerHTML);
   GROUPS.forEach((e) => {
     // console.log(e) ;
@@ -25,21 +28,18 @@ function onClose(event) {
   setTimeout(initWebSocket, 2000);
 }
 function onMessage(event) {
-  var state;
+  //var state;
   //console.log(event.data);
   //if (!websocket ||!event.data){return;}
   if (event.data === '{"refresh":true}') {
     location.reload();
   }
-  //   if (event.data === '{"getgroups":true}') {
-  //     setTimeout(() => {
-  //       fetch('/gp')
-  //         .then((response) => response.json())
-  //         .then((column) => {
-  //           datatable.columns.add(column);
-  //         });
-  //     }, 60000);
-  //   }
+
+  if (document.getElementById('arrGroups').innerHTML === '') {
+    if (event.data !== 'connection established' && event.data.length > 100) {
+      location.reload();
+    }
+  }
   if (event.data !== 'connection established' && event.data.length > 100) {
     // console.log(event.data);
     const parser = new DOMParser();

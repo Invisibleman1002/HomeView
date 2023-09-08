@@ -12,6 +12,7 @@ const handlebars = require('express-handlebars');
 const path = require('path');
 const mqtt = require('mqtt'); // require mqtt
 const { WebSocketServer } = require('ws');
+var mdns = require('multicast-dns')();
 const dayjs = require('dayjs');
 
 var clsSettings = require('./g_settings.js'); //import clsSettings from './g_settings.js';
@@ -470,6 +471,22 @@ app.get('/gp', (req, res) => {
   let groups = db.getGroups();
   res.send(JSON.stringify(groups));
 });
+
+app.get('/detail', async (req, res) => {
+  console.log(req.query.topic);
+  const result = await db.getDetailsbyTopic(req.query.topic);
+  const groups = await db.getGrouplist(result[0].group);
+  //console.log(groups);
+  //res.send(JSON.stringify(groups) + '<br><br>' + JSON.stringify(result));
+  res.render('details', {
+    layout: 'index',
+    //setter: 'this is the setup page',
+    version: version,
+    groups: groups,
+    topics: result,
+  });
+});
+
 /* app.get('/users', (req, res) => {
     const connection = mysql.createConnection({
       host: 'localhost',
@@ -504,3 +521,42 @@ const server = http.createServer(app);
 const port = 3000;
 server.listen(port);
 console.debug('Server listening on port ' + port);
+/* 
+const os = require('os');
+const interfaces = os.networkInterfaces();
+const addresses = [];
+for (const k in interfaces) {
+  for (const addr of interfaces[k]) {
+    if (addr.family === 'IPv4' && !addr.internal) {
+      addresses.push(addr.address);
+    }
+  }
+}
+//console.log(addresses[0]);
+//console.log(server.address());
+mdns.on('query', function (query) {
+  //console.log('got a query packet:', query);
+  //console.log('got a query packet:', server.address().address);
+
+  // iterate over all questions to check if we should respond
+  query.questions.forEach(function (q) {
+    if (q.type === 'A' && q.name === 'homeview.local') {
+      //console.log('got a query SSSSpacket:', query);
+      // send an A-record response for example.local
+      const ip = addresses[0].toString();
+      // console.log(ip);
+
+      mdns.respond({
+        answers: [
+          {
+            name: 'homeview.local',
+            type: 'A',
+            ttl: 300,
+            data: ip,
+          },
+        ],
+      });
+    }
+  });
+});
+ */
