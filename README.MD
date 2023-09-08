@@ -68,7 +68,7 @@ To use the project:
 </tr>
 {{#each topics}}
 <tr>
-  <td>{{label}}</td>
+  <td><a href="/detail?topic={{topic}}" style="text-decoration: none;" >{{label}}</a></td>
   <td>{{messagenumber message 1}}</td>
   {{#ifdatebetween date  ../updateddate}}
   <td><span class="w3-tag">{{dayjs date "MM/DD/YYYY hh:mm:ss A" "1"}}</span></td>
@@ -134,6 +134,10 @@ Make sure you click the `Save all Settings` when you complete your setup.
 
 ![Setup](/images/setup.gif)
 
+## Examples
+
+The items listed in the example folder is based on what I use for my home setup. Based on what you see in the first screenshot.
+
 ## Pi Setup
 
 I mentioned running this on a Pi. I have mine running using PM2. I also updated my service file to do a git pull before starting the service. That way my code is always up to date. If you fork your own branch, then you could also include your templates and main.hbs file to get pulled as well.
@@ -159,6 +163,7 @@ PIDFile=/home/taughenbaugh/.pm2/pm2.pid
 Restart=on-failure
 WorkingDirectory=/home/taughenbaugh/app/HomeView
 ExecStartPre=/usr/bin/git -C /home/taughenbaugh/app/HomeView pull
+ExecStartPre=npm install
 ExecStart=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 resurrect
 ExecReload=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 reload all
 ExecStop=/home/taughenbaugh/.nvm/versions/node/v18.17.1/lib/node_modules/pm2/bin/pm2 kill
@@ -169,7 +174,7 @@ WantedBy=multi-user.target
 ```
 
 I might update this after I setup from scratch again.
-I had to try severals different things to get stuff to work as I wanted. Which means, I have no idea is this below is exactly as stated.
+I had to try severals different things to get stuff to work as I wanted. Which means, I have no idea if this below is exactly as stated.
 
 sudo npm install -g pm2
 
