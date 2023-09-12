@@ -258,7 +258,7 @@ class Dbase {
     order by json_extract(x.value, '$.group') ,  CAST(json_extract(x.value, '$.order') AS INTEGER)`;
     return this.db.prepare(sql).all();
   }
-  getDetailsbyTopic(topic) {
+  getDetailsbyTopic(topic, limit) {
     const sql = `
     WITH tgroup AS
     (
@@ -271,9 +271,9 @@ class Dbase {
     WHERE json_extract(value, '$.topic') = ?
     )
     select m.id,m.topic, m.message, STRFTIME('%m/%d/%Y %H:%M:%S', m.date,'localtime') as date,g.'group' from mqtt m
-    inner join tgroup g on g.topic = m.topic  order by m.date desc LIMIT 100
+    inner join tgroup g on g.topic = m.topic  order by m.date desc LIMIT ?
     `;
-    return this.db.prepare(sql).all(topic);
+    return this.db.prepare(sql).all(topic, limit);
   }
   getGrouplist(group) {
     const sql = `

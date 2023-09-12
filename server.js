@@ -473,8 +473,13 @@ app.get('/gp', (req, res) => {
 });
 
 app.get('/detail', async (req, res) => {
-  console.log(req.query.topic);
-  const result = await db.getDetailsbyTopic(req.query.topic);
+  // console.log(req.query.topic);
+  // console.log(req.query.limit);
+  let limit = req.query.limit;
+  if (limit === undefined) {
+    limit = 100;
+  }
+  const result = await db.getDetailsbyTopic(req.query.topic, limit);
   const groups = await db.getGrouplist(result[0].group);
   //console.log(groups);
   //res.send(JSON.stringify(groups) + '<br><br>' + JSON.stringify(result));
