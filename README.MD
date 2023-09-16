@@ -14,6 +14,13 @@ This means the page does not need to reload when new data comes in. Only the spe
 
 > ![HomeView](/images/homeview.png)
 
+## Recent additions
+
+- Adding a querystring ?template={name} will load a new template layout instead of main.hbs. This is usefull you are running this on a Pi with a 7" screen. You can then change that layout for said sizes.
+- Added a limit option to the display page. It currently defaults to 100. http://192.168.0.160:3000/detail?topic=home/office/temp&limit=2000
+- If you are on the detail view and a sensor changes, there will be a notification that shows if the group you are viewing isn't the same one that was updated. If it is the same group, it will refresh the page.
+  - ![Detail](./images/notify.png)
+
 ## Usage
 
 To use the project:

@@ -37,7 +37,28 @@ function onMessage(event) {
 
   if (document.getElementById('arrGroups').innerHTML === '') {
     if (event.data !== 'connection established' && event.data.length > 100) {
-      location.reload();
+      console.log(tst[0].group);
+      const parser = new DOMParser();
+      const htmlDoc = parser.parseFromString(event.data, 'text/html');
+      var elm = htmlDoc.querySelectorAll('[data-group]')[0];
+      //console.log(elm);
+      var group = elm.getAttribute('data-group');
+      document.getElementById(
+        'lblMessage'
+      ).textContent = `${group} group just had an update.`;
+      document.getElementById('pnlMessage').style = 'block';
+
+      setTimeout(() => {
+        document.getElementById('lblMessage').textContent = '';
+        document.getElementById('pnlMessage').style.display = 'none';
+        document.getElementById('hHome').style.backgroundColor = 'green';
+        document.getElementById('hHome').style.color = 'white';
+      }, 5000);
+      if (group === tst[0].group) {
+        location.reload();
+      } else {
+        return;
+      }
     }
   }
   if (event.data !== 'connection established' && event.data.length > 100) {
@@ -83,6 +104,25 @@ function onMessage(event) {
 document.addEventListener('DOMContentLoaded', function () {
   initWebSocket();
   console.log('loaded');
+  //console.log(URL.href);
+  //console.log(window.location.search);
+  const params = new URLSearchParams(window.location.search);
+  //console.log(params.has('template'));
+  let rTemplate = params.get('template');
+  let lsTemplate = localStorage.getItem('template');
+
+  if (
+    rTemplate === 'main' ||
+    (!params.has('template') && lsTemplate === null)
+  ) {
+    //console.log('1');
+    localStorage.clear();
+  } else {
+    // console.log('2');
+    localStorage.setItem('template', rTemplate);
+  }
+
+  //localStorage.getItem("lastname");
   if (websocket.readyState !== WebSocket.OPEN) {
     //console.log('OPEN');
     //var GROUPS = JSON.parse(document.getElementById('arrGroups').innerHTML);

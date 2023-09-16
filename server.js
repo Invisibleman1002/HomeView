@@ -331,6 +331,20 @@ async function SetupMQTT() {
 }
 
 app.get('/', async (req, res) => {
+  //let rTemplate = 'minimain';
+  let rTemplate = req.query.template;
+  if (rTemplate === undefined) {
+    rTemplate = 'main';
+  }
+  const filePath = path.join(
+    __dirname,
+    `/views/${rTemplate.toLocaleLowerCase()}.hbs`
+  );
+
+  if (!fs.existsSync(filePath)) {
+    res.send(`Your Layout Template does not exist.<br>${filePath}`);
+    return;
+  }
   //Serves the body of the page aka "main.handlebars" to the container //aka "index.handlebars"
   const settings = await db.getSettings();
   if (settings == undefined) {
@@ -338,13 +352,13 @@ app.get('/', async (req, res) => {
     return;
   }
   const result = await db.getGroups();
-  console.log('app.get(/');
+  console.log(`app.get(/) ${rTemplate}`);
   //console.log(result);
   // result.forEach((result) => {
   //   console.log(result.value);
   // });
   //How to send a dynamic array of TestArray?
-  res.render('main', {
+  res.render(rTemplate, {
     layout: 'index',
     version: version,
     Groups: JSON.stringify(result),
