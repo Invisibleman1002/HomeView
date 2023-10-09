@@ -5,7 +5,7 @@
 /*
 https://github.com/websockets/ws/tree/master
 */
-const version = '1.30';
+const version = '1.31';
 const http = require('http');
 const express = require('express');
 const handlebars = require('express-handlebars');

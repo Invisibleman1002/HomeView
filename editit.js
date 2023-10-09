@@ -44,6 +44,9 @@ async function saveFile(path, file) {
       document.getElementById(
         'txtMessage'
       ).textContent = `${path}/${file} has been saved.`;
+      document.getElementById(
+        'txtMessage2'
+      ).textContent = `${path}/${file} has been saved.`;
       // title = document.getElementById('title');
       //body = document.getElementById('bd');
       // title.innerHTML = data.title;
@@ -73,10 +76,12 @@ document.addEventListener('DOMContentLoaded', function () {
   //   jf.groups.forEach((v) => console.log(v));
 
   var table = document.createElement('table');
-  table.setAttribute('class', 'w2-bordered w3-small');
+  table.setAttribute('class', 'w3-table w3-bordered w3-small'); // w3-hoverable w3-striped wont work on dynamic table
+  table.setAttribute('id', 'fs_table');
+  table.setAttribute('style', 'padding: 2px 2px !important;');
   var trV = document.createElement('tr');
-  var td1v = document.createElement('td');
-  var td2v = document.createElement('td');
+  var td1v = document.createElement('th');
+  var td2v = document.createElement('th');
   var textv = document.createTextNode('views');
   var text2v = document.createTextNode(' ');
   td1v.appendChild(textv);
@@ -134,8 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //templates
   var trV = document.createElement('tr');
-  var td1v = document.createElement('td');
-  var td2v = document.createElement('td');
+  var td1v = document.createElement('th');
+  var td2v = document.createElement('th');
   var textv = document.createTextNode('templates');
   var text2v = document.createTextNode(' ');
 
@@ -151,19 +156,24 @@ document.addEventListener('DOMContentLoaded', function () {
   //       ? jf.groups.filter((e) => !jf.groups.includes(e))
   //       : jf.groups.filter((e) => !jf.groups.includes(e));
 
-  const diff =
-    jf.groups.length > jf.templates.length
-      ? jf.groups.filter((e) => !jf.templates.includes(e))
-      : jf.templates.filter((e) => !jf.groups.includes(e));
-
-  // console.log(diff);
+  //   const diff =
+  //     jf.groups.length > jf.templates.length
+  //       ? jf.groups.filter((e) => !jf.templates.includes(e))
+  //       : jf.templates.filter((e) => !jf.groups.includes(e));
+  const newgroup = jf.groups.filter((e) => !jf.templates.includes(e));
+  const nogroup = jf.templates.filter((e) => !jf.groups.includes(e));
+  console.log(nogroup);
 
   jf.templates.forEach((v) => {
     // console.log(v);
     var trV = document.createElement('tr');
     var td1v = document.createElement('td');
     var td2v = document.createElement('td');
-    var textv = document.createTextNode('');
+    var txtv = '';
+    if (nogroup.includes(v)) {
+      txtv = 'no group=>';
+    }
+    var textv = document.createTextNode(txtv);
     var text2v = document.createTextNode(v);
     var a = document.createElement('a');
     // Append the text node to anchor element.
@@ -182,8 +192,8 @@ document.addEventListener('DOMContentLoaded', function () {
     table.appendChild(trV);
   });
 
-  if (diff.length > 0) {
-    diff.forEach((v) => {
+  if (newgroup.length > 0) {
+    newgroup.forEach((v) => {
       //     console.log(v);
       var trV = document.createElement('tr');
       var td1v = document.createElement('td');
@@ -222,7 +232,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       e.target.style.backgroundColor = 'green';
       e.target.style.color = 'white';
-      document.getElementById('txtMessage').textContent = `Editing: ${file}`;
+      if (',templatebody.hbs,setmain.hbs,details.hbs'.includes(`,${file}`)) {
+        document.getElementById(
+          'txtMessage'
+        ).textContent = `BE CAREFUL EDITING THIS FILE: ${file}`;
+        document.getElementById(
+          'txtMessage2'
+        ).textContent = `BE CAREFUL EDITING THIS FILE: ${file}`;
+      } else {
+        document.getElementById('txtMessage').textContent = `Editing: ${file}`;
+        document.getElementById('txtMessage2').textContent = `Editing: ${file}`;
+      }
 
       loadFile(path, file);
     });
@@ -240,6 +260,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById(
       'txtMessage'
     ).textContent = `Type in a file name ending with .hbs`;
+    document.getElementById(
+      'txtMessage2'
+    ).textContent = `Type in a file name ending with .hbs`;
     meditor.content.textContent = '';
   });
 
@@ -253,11 +276,17 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById(
           'txtMessage'
         ).textContent = `Editing new file: ${val}`;
+        document.getElementById(
+          'txtMessage2'
+        ).textContent = `Editing new file: ${val}`;
       } else {
         file = '';
         path = '';
         document.getElementById(
           'txtMessage'
+        ).textContent = `${val} must end in .hbs`;
+        document.getElementById(
+          'txtMessage2'
         ).textContent = `${val} must end in .hbs`;
       }
       // file = element.getAttribute('data-file');
@@ -285,6 +314,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       e.target.style.backgroundColor = 'green';
       e.target.style.color = 'white';
+      document.getElementById('txtMessage').textContent = `Editing: ${file}`;
+      document.getElementById('txtMessage2').textContent = `Editing: ${file}`;
       meditor.content.textContent = '';
     });
   });
@@ -387,6 +418,12 @@ document.addEventListener('DOMContentLoaded', function () {
               element.style.backgroundColor = 'white';
               element.style.color = 'black';
             });
+          document.getElementById(
+            'txtMessage'
+          ).textContent = `Editing no file.`;
+          document.getElementById(
+            'txtMessage2'
+          ).textContent = `Editing no file.`;
         },
       },
       {
@@ -408,8 +445,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var divStatM = document.createElement('span');
   divStatM.setAttribute('id', 'txtMessage');
   divStatB.appendChild(divStatM);
-  divStatM.textContent = ' ';
-  document.getElementById('editor').appendChild(divStatB);
+  divStatM.textContent = 'Welcome!';
+  //document.getElementById('editor').appendChild(divStatB);
+  document.getElementById('FileList').appendChild(divStatB);
+
+  var divStatC = document.createElement('div');
+  divStatC.setAttribute('class', 'pell-actionbar');
+  var divStatM2 = document.createElement('span');
+  divStatM2.setAttribute('id', 'txtMessage2');
+  divStatC.appendChild(divStatM2);
+  divStatM2.textContent = ' ';
+  document.getElementById('editor').appendChild(divStatC);
 
   document
     .querySelectorAll('.pell-content')[0]

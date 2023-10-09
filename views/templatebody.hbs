@@ -13,14 +13,24 @@
         details, setmain and templatebody should not be touched. They can be,
         but not recommended unless you want to change the design. If it's a
         useful change, please let me know.</p>
+      <p>
+        The view templates: details, setmain and templatebody will also get
+        overwritten doing a git pull. So if you use pm2 and my scripts to auto
+        grab the lastest changes on a reboot, you could lose your edit.</p>
+      <p>if working from filesystem, rename_to_main.hbs is used as a start for
+        your sensors. The reason for not calling it main.hbs is so that when you
+        create your own main.hbs and go to git pull my updates, it will not
+        overwrite your changes.</p>
+      <p>Basically on first run, open rename_to_main.hbs and copy the contents.
+        Then next to 'create file=>', type in main.hbs, press enter, and paste
+        in the contents. Change the details for your own sensors. Save the
+        changes.</p>
     </div>
     <div class='w3-panel w3-pale-green w3-bottombar w3-border-green w3-border'>
       <h3>TEMPLATES</h3>
       <p>Templates are what is loaded into the view in realitime as sensor data
         comes in. These should be named based on the groups you setup.</p>
-      <p>rename_to_main.hbs is used as a start for your sensors. The reason for
-        not calling it main.hbs is so that when you create your own main.hbs and
-        go to git pull for updates, it will not overwrite your changes.</p>
+
     </div>
     <div class='w3-panel w3-pale-green w3-bottombar w3-border-green w3-border'>
       <h3>Editor</h3>
