@@ -15,7 +15,10 @@
     />
     <script src='../../main.js' type='text/javascript'></script>
     <style>
-      body { font-family: "Lato", sans-serif; }
+      body { font-family: "Lato", sans-serif; } #popup{ position: fixed; top:
+      50%; left: 50%; margin-top: -100px; margin-left: -150px; border: 1px solid
+      #5C5C5C; height:100px; width:200px; background-color:#CFC; font-size:
+      x-large; display:none; }#popup .content{padding-top: 20px;}
     </style>
   </head>
   <body>
@@ -23,4 +26,7 @@
     {{{mqttstatus}}}
     <div style='display: none;' id='arrGroups'>{{Groups}}</div>
   </body>
+  <div id='popup' class="w3-container w3-yellow"></>
+    <div class='content'>Server Offline!</div>
+  </div>
 </html>

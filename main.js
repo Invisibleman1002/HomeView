@@ -15,6 +15,7 @@ function onOpen(event) {
   if (document.getElementById('arrGroups').innerHTML === '') {
     return;
   }
+  document.getElementById('popup').style = 'display:none;';
   var GROUPS = JSON.parse(document.getElementById('arrGroups').innerHTML);
   GROUPS.forEach((e) => {
     // console.log(e) ;
@@ -25,6 +26,7 @@ function onOpen(event) {
 function onClose(event) {
   console.log('Connection closed');
   //if (attempts < 10)
+  document.getElementById('popup').style = 'display:block;';
   setTimeout(initWebSocket, 2000);
 }
 function onMessage(event) {
