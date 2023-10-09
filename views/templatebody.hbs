@@ -1,0 +1,42 @@
+<div class='w3-container'>
+  <div class='w3-container w3-orange'>
+    <h3>Template / View editor</h3>
+  </div>
+  <button
+    id='btnHelp'
+    class='w3-button w3-block w3-left-align w3-green'
+  >Help</button>
+  <div id='help' class='w3-hide'>
+    <div class='w3-panel w3-yellow w3-bottombar w3-border-amber w3-border'>
+      <h3>VIEWS</h3>
+      <p>View are what is loaded into the body of the page. The view templates:
+        details, setmain and templatebody should not be touched. They can be,
+        but not recommended unless you want to change the design. If it's a
+        useful change, please let me know.</p>
+    </div>
+    <div class='w3-panel w3-pale-green w3-bottombar w3-border-green w3-border'>
+      <h3>TEMPLATES</h3>
+      <p>Templates are what is loaded into the view in realitime as sensor data
+        comes in. These should be named based on the groups you setup.</p>
+      <p>rename_to_main.hbs is used as a start for your sensors. The reason for
+        not calling it main.hbs is so that when you create your own main.hbs and
+        go to git pull for updates, it will not overwrite your changes.</p>
+    </div>
+    <div class='w3-panel w3-pale-green w3-bottombar w3-border-green w3-border'>
+      <h3>Editor</h3>
+      <p>This is a pretty basic wyswyg editor. I grabbed the smallest that would
+        allow text editing.</p>
+      <p>I added a few quick macros to the Action bar. All are used in my
+        example test.hbs file. These are created by using
+        handlebars.registerHelper.
+        <ul>
+          <li>FE - For each loop</li>
+          <li>DJ - Dayjs formatting example</li>
+          <li>IF - If statement.</li>
+          <li>FX - convert string to float with X decimal places shown.</li>
+          <li>CL - CLEAR EDITS.</li>
+        </ul>
+      </p>
+    </div>
+  </div>
+</div>

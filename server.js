@@ -390,6 +390,110 @@ app.get('/setup/', (req, res) => {
   });
 });
 
+app.get('/loadt/', async (req, res) => {
+  let rFile = req.query.file;
+  let rPath = req.query.path;
+  if (rFile !== undefined) {
+    console.log(rFile);
+  }
+  if (rPath !== undefined) {
+    console.log(rPath);
+  }
+  let filePath = '';
+  if (rPath.toString() === 'templates') {
+    filePath = path.join(__dirname, `/views/templates/${rFile}`);
+  } else {
+    filePath = path.join(__dirname, `/views/${rFile}`);
+  }
+  //const filePath = path.join(__dirname, `/views/templates/${rFile}`);
+  //const viewpath = path.join(__dirname, `/views/${rFile}`);
+  if (!fs.existsSync(filePath)) {
+    return;
+  }
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
+
+  res.send(source);
+});
+
+app.post('/savet/', async (req, res) => {
+  let rJsonBody = req.body;
+  let rPath = req.query.path;
+  if (rJsonBody === undefined) {
+    // console.log(rJsonBody);
+    res.send(JSON.stringify({ a: 'NOT ok' }));
+    return;
+  }
+  if (rPath !== undefined) {
+    console.log(rPath);
+  }
+  console.log(rJsonBody.path.toString()); //toLocaleLowerCase
+  if (rJsonBody.path.toString() === 'templates') {
+    const filePath = path.join(
+      __dirname,
+      `/views/templates/${rJsonBody.file.toString()}`
+    );
+    console.log(filePath);
+    fs.writeFileSync(filePath, rJsonBody.contents.toString());
+  } else {
+    const viewpath = path.join(
+      __dirname,
+      `/views/${rJsonBody.file.toString()}`
+    );
+    fs.writeFileSync(viewpath, rJsonBody.contents);
+  }
+
+  res.send(JSON.stringify({ a: 'ok' }));
+});
+
+app.get('/template/', async (req, res) => {
+  const filePath = path.join(__dirname, `/views/templates/`);
+
+  // fs.readdir(filePath, (err, files) => {
+  //   files.forEach((file) => {
+  //     console.log(file);
+  //   });
+  // });
+
+  const viewpath = path.join(__dirname, `/views/`);
+  // fs.readdir(viewpath, (err, files) => {
+  //   files.forEach((file) => {
+  //     console.log(file);
+  //   });
+  // });
+  //..var files = fs.readdirSync('C:/tmp').filter(fn => fn.endsWith('.csv'));
+  //changing templates detail,main and setmain can effect the site since.  These files were included with HomeView and may get overwritten if you fetch.
+  //You can add /Templates/<Based on group name>.hbs   <- PULL GROUP LIST AND HELP WITH FILENAME!!!
+  //
+  let rTemplate = req.query.edit;
+  if (rTemplate !== undefined) {
+    console.log(rTemplate);
+  }
+  fs.readdirSync(filePath)
+    .filter((fn) => fn.endsWith('.hbs'))
+    .forEach((file) => {
+      //console.log(file);
+    });
+
+  fs.readdirSync(viewpath)
+    .filter((fn) => fn.endsWith('.hbs'))
+    .forEach((file) => {
+      //// console.log(file);
+    });
+  let fviews = fs.readdirSync(viewpath).filter((fn) => fn.endsWith('.hbs'));
+  let ftemplates = fs.readdirSync(filePath).filter((fn) => fn.endsWith('.hbs'));
+  const groups = await db.getGroups();
+  let newgroup = [];
+  groups.forEach((g) => newgroup.push(`${g.value.toLocaleLowerCase()}.hbs`));
+  /// console.log(groups);
+  let file_json = { view: fviews, templates: ftemplates, groups: newgroup };
+  // console.log(file_json);
+  res.render('templatebody', {
+    layout: 'template',
+    //setter: 'this is the setup page',
+    filetemplates: JSON.stringify(file_json),
+    version: version,
+  });
+});
 /* //not being used
  app.get('/setup/AT', (req, res) => {
   //Serves the body of the page aka "main.handlebars" to the container //aka "index.handlebars"

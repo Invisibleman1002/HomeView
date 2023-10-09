@@ -1,0 +1,49 @@
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>HomeView Setup {{{version}}}</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <link rel='stylesheet' href='https://www.w3schools.com/w3css/4/w3.css' />
+    <link
+      rel='stylesheet'
+      href='https://fonts.googleapis.com/css?family=Lato'
+    />
+    <link
+      rel='stylesheet'
+      href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+    />
+    <link rel='stylesheet' type='text/css' href='../../wsiwyg/pell.min.css' />
+    <script src='../../wsiwyg/pell.min.js'></script>
+    <script src='../../editit.js' type='module'></script>
+    <style type='text/css' media='screen'>
+      .content { box-sizing: border-box; margin: 0 auto; max-width: 600px;
+      padding: 20px; } .pell-message { background-color: transparent; border:
+      none; cursor: pointer; height: 30px; outline: 0; width: 30px;
+      vertical-align: bottom; }
+    </style>
+  </head>
+  <body>
+    {{{body}}}
+
+    <div class='w3-row'>
+      <div class='w3-half' style='width:150px'>
+        <div id='FileList'></div>
+      </div>
+    </div>
+
+    <hr />
+
+    <div id='editor' style='white-space: pre-wrap;'></div>
+    <br />
+    <br />
+
+    <input
+      type='hidden'
+      id='json_files'
+      name='json_files'
+      value='{{{filetemplates}}}'
+    />
+
+  </body>
+</html>
