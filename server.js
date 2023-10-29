@@ -5,7 +5,7 @@
 /*
 https://github.com/websockets/ws/tree/master
 */
-const version = '1.31';
+const version = '1.32';
 const http = require('http');
 const express = require('express');
 const handlebars = require('express-handlebars');
@@ -84,8 +84,8 @@ hbs.handlebars.registerHelper('ifdatebetween', function (v1, v2, options) {
   var strlastupdated = Date.parse(v2);
   var sensordt = new Date(strsensordt);
   var lastupdated = new Date(strlastupdated);
-  var dp = new Date(lastupdated.getTime() + 5000);
-  var dm = new Date(lastupdated.getTime() - 5000);
+  var dp = new Date(lastupdated.getTime() + 10000);
+  var dm = new Date(lastupdated.getTime() - 10000);
   //   console.log(dp);
   //   console.log(dm);
   if (sensordt < dp && sensordt > dm) {
