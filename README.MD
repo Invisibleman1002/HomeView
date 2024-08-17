@@ -16,6 +16,7 @@ This means the page does not need to reload when new data comes in. Only the spe
 
 ## Recent additions
 
+- Added Dockerfile. I have an Asustor NAS, with Portainer running and I got this running under Docker.
 - Added a template editing page. This will allow you to make new additions to your sensor pages without working directly on the nodejs file system. I've tested but it needs cleaned up.
 - Adding a querystring ?template={name} will load a new template layout instead of main.hbs. This is usefull you are running this on a Pi with a 7" screen. You can then change that layout for said sizes.
 - Added a limit option to the display page. It currently defaults to 100. http://192.168.0.160:3000/detail?topic=home/office/temp&limit=2000
@@ -208,3 +209,22 @@ Once you save, if this all works, you can set off a sensor and see it on the Hom
 While in the HomeView folder, you can type `pm2 start server.js`. Command `pm2 ls` will list the services. I think you also need to do a `pm2 save` so it stays active on a reboot.
 
 OH! You can use https://sqlitebrowser.org/ to view the database file. If you use this, you can also load the included [db.sqbpro](db.sqbpro) file to view all the SQL statments I created in designing this. You're going to love the SQL for getting all the details based on the Topic received. Its a 100 lines of pure luck that it worked.
+
+## Docker
+
+I would recommend getting all the other stuff setup first. Your initial Database, the hbs files created and have it working how you want.
+Then run the docker commend:
+
+c:\Dev\HomeView>docker build . -t invisibleman1002/homeview-dock
+c:\Dev\HomeView>docker images
+c:\Dev\HomeView>docker run -p 3000:3000 -p 3001:3001 -i <imageit>
+That will allow you to test the docker image functions the same as running HomeView from npm start.
+I then ran:
+c:\Dev\HomeView>docker save -o homeview.tar invisibleman1002/homeview-dock:latest
+This creates a tar file you can import into portainer under images.
+You will then need to create the Container.  
+Please note I added TZ to my setup for Detroit Timezone. You might need to adjust for your location.
+Within the POrtainer Container creation. I added Manual Port publishing for both 3000 and 3001.
+I also added Env under the advanced container settings.
+name:TZ value:America/Detroit
+Not sure if that is needed since its already in the Dockerfile.
